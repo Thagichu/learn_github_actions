@@ -38,7 +38,7 @@ jobs:
       - name: Get Commit Messages
         id: commit_messages
         run: |
-          echo "commit_messages=Hello Messages" >> $GITHUB_STATE
+          echo "SELECTED_COLOR=green" >> $GITHUB_OUTPUT
 
       - name: Create Release
         id: create_release
@@ -49,6 +49,6 @@ jobs:
           body: |
             This is the release for version ${{ steps.version.outputs.version }}.
 
-            Commit messages for this release: ${{ steps.commit_messages.outputs.commit_messages }}
+            Commit messages for this release: ${{ steps.commit_messages.outputs.SELECTED_COLOR }}
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
