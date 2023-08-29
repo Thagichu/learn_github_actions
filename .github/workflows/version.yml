@@ -44,6 +44,7 @@ jobs:
             This is the release for version ${{ steps.version.outputs.version }}.
 
             Changed Files:
+            ====================================================================================================
             ${{ steps.changed_files.outputs.CHANGED_FILES }}
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
