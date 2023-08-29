@@ -35,11 +35,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
 
-      - name: Generate Change Log
-        id: changelog
+      - name: Get Commit Messages
+        id: commit_messages
         run: |
-          git log --pretty=format:"%h - %an, %ar : %s" ${{ steps.version.outputs.previous-version }}..${{ steps.version.outputs.version }} > changelog.txt
-          echo "::set-output name=changelog::changelog.txt"
+          commit_messages=$(git log --pretty=format:'- %s' ${{ steps.version.outputs.previous-version }}..${{ steps.version.outputs.version }} | tr '\n' ',')
+          echo "COMMIT_MESSAGES=$commit_messages" >> $GITHUB_ENV
 
       - name: Create Release
         id: create_release
@@ -50,11 +50,6 @@ jobs:
           body: |
             This is the release for version ${{ steps.version.outputs.version }}.
 
-            Commit messages for this release:
-            ${{ steps.commit_messages.outputs.commit_messages }}
-
-            Changelog:
-            ${{ steps.changelog.outputs.changelog }}
-          files: changelog.txt
+            Commit messages for this release: ${{ env.COMMIT_MESSAGES }}
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
