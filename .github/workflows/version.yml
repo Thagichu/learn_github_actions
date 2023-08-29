@@ -18,6 +18,7 @@ jobs:
           git fetch
           git diff --name-only origin/main origin/${{ github.event.pull_request.head.ref }}
           CHANGED_FILES=$(git diff --name-only origin/main origin/${{ github.event.pull_request.head.ref }}) 
+          echo $CHANGED_FILES
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_OUTPUT
 
       - name: Git Version
