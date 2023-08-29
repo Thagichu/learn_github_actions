@@ -1,30 +1,27 @@
 name: Git Versioning
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types:
+      - closed
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.head_ref }} # checkout the correct branch name
-          fetch-depth: 0 # fetch the whole repo history
+        uses: actions/checkout@v2
+
+      - name: Get Changed Files
+        id: changed_files
+        run: |
+          git fetch origin main --depth=1
+          CHANGED_FILES=$(git diff --name-only origin/main ${{ github.event.pull_request.head.ref }})
+          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_OUTPUT
 
       - name: Git Version
         id: version
         uses: codacy/git-version@2.7.1
-
-      - name: Use the version
-        run: |
-          echo ${{ steps.version.outputs.version }}
-      - name: Use the previous version
-        run: |
-          echo ${{ steps.version.outputs.previous-version }}
 
       - name: Update Git Tags
         run: |
@@ -38,7 +35,7 @@ jobs:
       - name: Get Commit Messages
         id: commit_messages
         run: |
-          COMMIT_MESSAGE=$(git log --pretty=format:'%s' ${{ steps.version.outputs.previous-version }}..${{ steps.version.outputs.version }})
+          COMMIT_MESSAGE=$(git log --pretty=format:'- %s' ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }})
           echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
 
       - name: Create Release
@@ -50,8 +47,10 @@ jobs:
           body: |
             This is the release for version ${{ steps.version.outputs.version }}.
 
-            Commit messages for this release: 
+            Commit messages for this release:
+            ${{ steps.commit_messages.outputs.COMMIT_MESSAGE}}
 
-            ${{ steps.commit_messages.outputs.COMMIT_MESSAGE }}
+            Changed Files:
+            ${{ steps.changed_files.outputs.CHANGED_FILES }}
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
