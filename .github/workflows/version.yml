@@ -38,7 +38,10 @@ jobs:
       - name: Get Commit Messages
         id: commit_messages
         run: |
-          echo "::set-output name=messages::$(git log --pretty=format:'- %s' ${{ steps.version.outputs.previous-version }}..${{ steps.version.outputs.version }} | tr -d '\n')"
+          commit_messages=$(git log --pretty=format:'- %s' ${{ steps.version.outputs.previous-version }}..${{ steps.version.outputs.version }} | tr -d '\n')
+          echo "COMMIT_MESSAGES=$commit_messages" >> $GITHUB_ENV
+          echo "$commit_messages" > $GITHUB_WORKSPACE/commit_messages.txt
+          echo "::set-output name=commit_messages_file::$GITHUB_WORKSPACE/commit_messages.txt"
 
       - name: Create Release
         id: create_release
@@ -49,6 +52,7 @@ jobs:
           body: |
             This is the release for version ${{ steps.version.outputs.version }}.
             Commit messages for this release:
-            ${{ steps.commit_messages.outputs.messages }}
+            ${{ env.COMMIT_MESSAGES }}
+          files: ${{ steps.commit_messages.outputs.commit_messages_file }}
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
