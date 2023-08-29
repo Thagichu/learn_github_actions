@@ -2,6 +2,6 @@ const sayHello = (name: string) => {
   return `Hello ${name}`;
 };
 
-const sayGoodBye = () => {
-  return `Goodbye`;
+const sayGoodBye = (name: string) => {
+  return `Goodbye ${name}`;
 };
