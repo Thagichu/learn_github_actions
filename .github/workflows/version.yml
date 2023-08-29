@@ -57,5 +57,7 @@ jobs:
             ${{ steps.changed_files.outputs.CHANGED_FILES }}
             ====================================================================================================
 
+            devThagichu
+
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
