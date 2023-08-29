@@ -3,5 +3,6 @@ const sayHello = (name: string) => {
 };
 
 const sayGoodBye = (name: string) => {
+  // goodbye
   return `Goodbye ${name}`;
 };
