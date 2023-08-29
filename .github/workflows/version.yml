@@ -34,3 +34,27 @@ jobs:
           git push origin --tags
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+
+      - name: Generate Change Log
+        id: changelog
+        run: |
+          git log --pretty=format:"%h - %an, %ar : %s" ${{ steps.version.outputs.previous-version }}..${{ steps.version.outputs.version }} > changelog.txt
+          echo "::set-output name=changelog::changelog.txt"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          release_name: Release ${{ steps.version.outputs.version }}
+          body: |
+            This is the release for version ${{ steps.version.outputs.version }}.
+
+            Commit messages for this release:
+            ${{ steps.commit_messages.outputs.commit_messages }}
+
+            Changelog:
+            ${{ steps.changelog.outputs.changelog }}
+          files: changelog.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
