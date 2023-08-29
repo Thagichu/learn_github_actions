@@ -15,7 +15,7 @@ jobs:
       - name: Get Changed Files
         id: changed_files
         run: |
-          git fetch origin main --depth=1
+          git fetch origin main 
           CHANGED_FILES=$(git diff --name-only origin/main ${{ github.event.pull_request.head.ref }})
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_OUTPUT
 
