@@ -1,3 +1,3 @@
-const myFunction = () => {
-  return "Hello World";
+const sayHello = (name: string) => {
+  return `Hello ${name}`;
 };
