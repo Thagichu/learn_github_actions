@@ -33,12 +33,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
 
-      - name: Get Commit Messages
-        id: commit_messages
-        run: |
-          COMMIT_MESSAGE=$(git log --pretty=format:'- %s' ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }})
-          echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
-
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -48,8 +42,7 @@ jobs:
           body: |
             This is the release for version ${{ steps.version.outputs.version }}.
 
-            Commit messages for this release:
-            ${{ steps.commit_messages.outputs.COMMIT_MESSAGE}}
+
 
             Changed Files:
             ${{ steps.changed_files.outputs.CHANGED_FILES }}
