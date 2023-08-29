@@ -28,8 +28,8 @@ jobs:
 
       - name: Update Git Tags
         run: |
-          git config user.name "Dev Thagichu"
-          git config user.email "anthonythagichu@gmail.com"
+          git config user.name "Anthony G Thagichu"
+          git config user.email "athagichu@gerties.org"
           git tag ${{ steps.version.outputs.version }}
           git push origin --tags
         env:
