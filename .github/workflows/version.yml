@@ -25,3 +25,10 @@ jobs:
       - name: Use the previous version
         run: |
           echo ${{ steps.version.outputs.previous-version }}
+
+      - name: Update Git Tags
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag ${{ steps.version.outputs.version }}
+          git push origin --tags
