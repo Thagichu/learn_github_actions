@@ -39,7 +39,7 @@ jobs:
         id: commit_messages
         run: |
           echo "SELECTED_COLOR=green" >> $GITHUB_OUTPUT
-          echo git log --pretty=format:'%s' ${{ steps.version.outputs.previous-version }}..${{ steps.version.outputs.version }}
+          git log --pretty=format:'%s' ${{ steps.version.outputs.previous-version }}..${{ steps.version.outputs.version }}
 
       - name: Create Release
         id: create_release
