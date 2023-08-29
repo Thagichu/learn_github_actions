@@ -10,27 +10,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: Get Changed Files
-        id: changed_files
-        run: |
-          git fetch
-          git diff --name-only origin/main origin/${{ github.event.pull_request.head.ref }}
-          CHANGED_FILES=$(git diff --name-only origin/main origin/${{ github.event.pull_request.head.ref }}) 
-          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_OUTPUT
-
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }} # checkout the correct branch name
+          fetch-depth: 0 # fetch the whole repo history
       - name: Git Version
         id: version
         uses: codacy/git-version@2.7.1
-
       - name: Use the version
         run: |
           echo ${{ steps.version.outputs.version }}
       - name: Use the previous version
         run: |
           echo ${{ steps.version.outputs.previous-version }}
-
       - name: Update Git Tags
         run: |
           git config user.name "Anthony G Thagichu"
@@ -40,18 +32,30 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
 
+      - name: Get Changed Files
+        id: changed_files
+        run: |
+          git fetch
+          git diff --name-only origin/main origin/${{ github.event.pull_request.head.ref }}
+          CHANGED_FILES=$(git diff --name-only origin/main origin/${{ github.event.pull_request.head.ref }}) 
+          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         with:
-          prerelease: true
           tag_name: ${{ steps.version.outputs.version }}
-          release_name: Prerelease ${{ steps.version.outputs.version }}-${{ github.event.pull_request.head.ref }}
+          release_name: Release ${{ steps.version.outputs.version }}
+          prerelease: true
           body: |
             This is the release for version ${{ steps.version.outputs.version }}.
 
             Changed Files:
             ====================================================================================================
             ${{ steps.changed_files.outputs.CHANGED_FILES }}
+            ====================================================================================================
+
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
