@@ -49,8 +49,6 @@ jobs:
           body: |
             This is the release for version ${{ steps.version.outputs.version }}.
             Commit messages for this release:
-            \`\`\`
             ${{ steps.commit_messages.outputs.messages }}
-            \`\`\`
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
