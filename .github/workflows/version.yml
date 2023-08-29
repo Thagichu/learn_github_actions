@@ -3,7 +3,7 @@ name: Git Versioning
 on:
   pull_request:
     types:
-      - closed
+      - opened
 
 jobs:
   lint:
