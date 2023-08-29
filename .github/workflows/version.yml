@@ -24,6 +24,13 @@ jobs:
         id: version
         uses: codacy/git-version@2.7.1
 
+      - name: Use the version
+        run: |
+          echo ${{ steps.version.outputs.version }}
+      - name: Use the previous version
+        run: |
+          echo ${{ steps.version.outputs.previous-version }}
+
       - name: Update Git Tags
         run: |
           git config user.name "Anthony G Thagichu"
@@ -39,11 +46,12 @@ jobs:
         with:
           prerelease: true
           tag_name: ${{ steps.version.outputs.version }}
-          release_name: Prerelease ${{ steps.version.outputs.version }}
+          release_name: Prerelease ${{ steps.version.outputs.version }}-${{ github.event.pull_request.head.ref }}
           body: |
             This is the release for version ${{ steps.version.outputs.version }}.
 
             Changed Files:
+            ====================================================================================================
             ${{ steps.changed_files.outputs.CHANGED_FILES }}
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
